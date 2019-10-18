@@ -265,7 +265,6 @@
             this.tabPageDatabase.TabIndex = 1;
             this.tabPageDatabase.Text = "Database";
             this.tabPageDatabase.UseVisualStyleBackColor = true;
-            this.tabPageDatabase.Click += new System.EventHandler(this.TabPageDatabase_Click);
             // 
             // dataGridView1
             // 

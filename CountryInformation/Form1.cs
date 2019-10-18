@@ -14,12 +14,52 @@ namespace CountryInformation
 {
     public partial class Form1 : Form
     {
+        string pathToDB= @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\1eluz\source\repos\CountryInformation\CountryInformation\Database1.mdf;Integrated Security = True";
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void ButtonSearch_Click(object sender, EventArgs e)
+        public async void fillDataGrid()
+        {
+            SQL sql = new SQL(pathToDB);
+            await sql.sqlConnection.OpenAsync();
+
+            string sqlCommand = "SELECT Countries.Name, Countries.Alpha3Code,  Cities.Name as Capital, Countries.Area, Countries.Population, Regions.Name as Region from Countries INNER JOIN Cities ON Countries.Capital = Cities.Id INNER JOIN Regions ON Countries.Region = Regions.Id ";
+            sql.setSqlCommand(sqlCommand);
+
+            List<string[]> data = new List<string[]>();
+            try //заполнение таблицы во вкладке DataBase
+            {
+                sql.sqlDataReader = await sql.executeSqlCommand();
+                while (await sql.sqlDataReader.ReadAsync())
+                {
+                    data.Add(new string[6]);
+                    data[data.Count - 1][0] = sql.sqlDataReader[0].ToString();
+                    data[data.Count - 1][1] = sql.sqlDataReader[1].ToString();
+                    data[data.Count - 1][2] = sql.sqlDataReader[2].ToString();
+                    data[data.Count - 1][3] = sql.sqlDataReader[3].ToString();
+                    data[data.Count - 1][4] = sql.sqlDataReader[4].ToString();
+                    data[data.Count - 1][5] = sql.sqlDataReader[5].ToString();
+
+                }
+
+                foreach (string[] s in data)
+                {
+                    dataGridView1.Rows.Add(s);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                sql.close();
+            }
+        }
+
+        private async void ButtonSearch_Click(object sender, EventArgs e)
         {
             bool found = false;
             foreach (var item in DataGetter.getData())
@@ -38,6 +78,40 @@ namespace CountryInformation
                 }
             }
             if (found == false) MessageBox.Show("Страна не была найдена");
+            else
+                if (MessageBox.Show("Сохранить в базу данных информацию?", "Страна найдена", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                SQL sql = new SQL(pathToDB);
+                await sql.sqlConnection.OpenAsync();
+                string sqlCommand = "INSERT INTO Countries(Name, Alpha3Code, Capital, Area, Population, Region) Values(@Name, @Alpha3Code, @Capital, @Area, @Population, @Region)";
+                try { 
+                sql.setSqlCommand(sqlCommand);
+                sql.addCommandParameters("Name", textBoxCountryNameResult.Text);
+                sql.addCommandParameters("Alpha3Code", textBoxAlpha3Code.Text);
+                
+                   
+                    sql.getIdByField("Cities", "Name", 1);
+                    MessageBox.Show(sql.returnId.ToString());
+                    sql.addCommandParameters("Area", float.Parse(textBoxArea.Text));
+                sql.addCommandParameters("Population", Convert.ToInt32(textBoxPopulation.Text));
+                sql.addCommandParameters("Region", 1);
+                dataGridView1.Rows.Clear();
+                dataGridView1.Refresh();
+                await sql.sqlCommand.ExecuteNonQueryAsync();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                { 
+                sql.close();
+                }
+
+                fillDataGrid();
+
+            }
+            
         }
 
 
@@ -46,47 +120,9 @@ namespace CountryInformation
 
         private async void Form1_Load(object sender, EventArgs e)
         {
-           string connection = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\1eluz\source\repos\CountryInformation\CountryInformation\Database1.mdf;Integrated Security=True";
-            SqlConnection sqlConnection = new SqlConnection(connection);
-            await sqlConnection.OpenAsync();
-            SqlDataReader sqlDataReader = null;
-            SqlCommand sqlCommand = new SqlCommand("SELECT Countries.Name, Countries.Alpha3Code,  Cities.Name as Capital, Countries.Area, Countries.Population, Regions.Name as Region from Countries INNER JOIN Cities ON Countries.Capital = Cities.Id INNER JOIN Regions ON Countries.Region = Regions.Id ", sqlConnection);
-
-            List<string[]> data = new List<string[]>();
-            try
-            {
-                sqlDataReader = await sqlCommand.ExecuteReaderAsync();
-                while (await sqlDataReader.ReadAsync())
-                {
-                    data.Add(new string[6]);
-                    data[data.Count - 1][0] = sqlDataReader[0].ToString();
-                    data[data.Count - 1][1] = sqlDataReader[1].ToString();
-                    data[data.Count - 1][2] = sqlDataReader[2].ToString();
-                    data[data.Count - 1][3] = sqlDataReader[3].ToString();
-                    data[data.Count - 1][4] = sqlDataReader[4].ToString();
-                    data[data.Count - 1][5] = sqlDataReader[5].ToString();
-                    
-                }
-
-                foreach (string[] s in data)
-                {
-                    dataGridView1.Rows.Add(s);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (sqlDataReader != null)
-                    sqlDataReader.Close();
-            }
+            fillDataGrid();
         }
 
-        private void TabPageDatabase_Click(object sender, EventArgs e)
-        {
-
-        }
+        
     }
 }
