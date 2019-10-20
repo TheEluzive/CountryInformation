@@ -117,7 +117,6 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Результаты поиска";
-            this.groupBox1.UseWaitCursor = false;
             // 
             // textBoxCapital
             // 

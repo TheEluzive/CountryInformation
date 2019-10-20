@@ -52,17 +52,37 @@ namespace CountryInformation
                     return Convert.ToInt32(sqlDataReaderLocal[0]);
                 }
             }
-            catch
-            {
-                returnId = "10";
+            catch//??
+            {                
                 return 0;
             }
             finally
             {
-                
+                sqlConnectionLocal.Close();
             }
             return 0;
 
+        }
+
+        public async Task<string> simpleInsert(string command)
+        {
+            SqlConnection sqlConnectionLocal = new SqlConnection(connectionToDBinner);            
+            await sqlConnectionLocal.OpenAsync();
+            SqlCommand sqlCommandLocal = new SqlCommand(command, sqlConnectionLocal);
+
+            try
+            {
+                await sqlCommandLocal.ExecuteNonQueryAsync();
+                return "Ok";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message.ToString();
+            }
+            finally
+            {
+                sqlConnectionLocal.Close();
+            }
         }
 
 

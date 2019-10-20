@@ -14,7 +14,8 @@ namespace CountryInformation
 {
     public partial class Form1 : Form
     {
-        string pathToDB= @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\1eluz\source\repos\CountryInformation\CountryInformation\Database1.mdf;Integrated Security = True";
+        static string pathToDB= @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\1eluz\source\repos\CountryInformation\CountryInformation\Database1.mdf;Integrated Security = True";
+        SQL sql = new SQL(pathToDB);
         public Form1()
         {
             InitializeComponent();
@@ -22,7 +23,7 @@ namespace CountryInformation
 
         public async void fillDataGrid()
         {
-            SQL sql = new SQL(pathToDB);
+           
             await sql.sqlConnection.OpenAsync();
 
             string sqlCommand = "SELECT Countries.Name, Countries.Alpha3Code,  Cities.Name as Capital, Countries.Area, Countries.Population, Regions.Name as Region from Countries INNER JOIN Cities ON Countries.Capital = Cities.Id INNER JOIN Regions ON Countries.Region = Regions.Id ";
@@ -81,20 +82,55 @@ namespace CountryInformation
             else
                 if (MessageBox.Show("Сохранить в базу данных информацию?", "Страна найдена", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                SQL sql = new SQL(pathToDB);
-                await sql.sqlConnection.OpenAsync();
+                
+                //await sql.sqlConnection.OpenAsync();
                 string sqlCommand = "INSERT INTO Countries(Name, Alpha3Code, Capital, Area, Population, Region) Values(@Name, @Alpha3Code, @Capital, @Area, @Population, @Region)";
-                try { 
                 sql.setSqlCommand(sqlCommand);
+                string insertResult = "";
+                try
+                {
+                    int returnedId = await sql.getIdByField("Cities", "Name", textBoxCapital.Text);
+                    if (returnedId == 0)
+                    {
+                        insertResult = (await sql.simpleInsert("INSERT INTO Cities values('" + textBoxCapital.Text + "')")).ToString();
+                        if(!insertResult.Equals("Ok")) MessageBox.Show(insertResult, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        sql.addCommandParameters("Capital", await sql.getIdByField("Cities", "Name", textBoxCapital.Text));
+                    }
+                    else
+                    {
+                        sql.addCommandParameters("Capital", returnedId);
+                    }
+
+                    returnedId = await sql.getIdByField("Regions", "Name", textBoxRegion.Text);
+                    if (returnedId == 0)
+                    {
+                        insertResult = (await sql.simpleInsert("INSERT INTO Regions values('" + textBoxRegion.Text + "')")).ToString();
+                        if (!insertResult.Equals("Ok")) MessageBox.Show(insertResult, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        sql.addCommandParameters("Region", await sql.getIdByField("Regions", "Name", textBoxRegion.Text));
+                    }
+                    else
+                    {
+                        sql.addCommandParameters("Region", returnedId);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                try { 
+                
                 sql.addCommandParameters("Name", textBoxCountryNameResult.Text);
                 sql.addCommandParameters("Alpha3Code", textBoxAlpha3Code.Text);
-                
-                MessageBox.Show((await sql.getIdByField("Cities", "Name", "VOLGOGRAD")).ToString());
-                sql.addCommandParameters("Capital", 1);
+                    
+                   
                 sql.addCommandParameters("Area", float.Parse(textBoxArea.Text));
                 sql.addCommandParameters("Population", Convert.ToInt32(textBoxPopulation.Text));
-                MessageBox.Show((await sql.getIdByField("Regions", "Name", "Europe")).ToString());
-                sql.addCommandParameters("Region", 1);
+                
+                   
+                    
                 dataGridView1.Rows.Clear();
                 dataGridView1.Refresh();
                 await sql.sqlCommand.ExecuteNonQueryAsync();
@@ -105,7 +141,7 @@ namespace CountryInformation
                 }
                 finally
                 { 
-                sql.close();
+                sql.sqlConnection.Close();
                 }
 
                 fillDataGrid();
