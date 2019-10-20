@@ -14,8 +14,8 @@ namespace CountryInformation
 {
     public partial class Form1 : Form
     {
-        static string pathToDB= @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\1eluz\source\repos\CountryInformation\CountryInformation\Database1.mdf;Integrated Security = True";
-        SQL sql = new SQL(pathToDB);
+        public static string pathToDB;
+        private SQL sql;
         public Form1()
         {
             InitializeComponent();
@@ -166,11 +166,16 @@ namespace CountryInformation
        
         
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
+            sql = new SQL(pathToDB);
             fillDataGrid();
         }
 
-        
+        private void Form1_FormClosing(Object sender, FormClosingEventArgs e)
+        {
+            
+
+        }
     }
 }

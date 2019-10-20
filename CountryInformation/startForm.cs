@@ -16,5 +16,21 @@ namespace CountryInformation
         {
             InitializeComponent();
         }
+
+        public void mainForm()
+        {
+
+            Form mainForm = new Form1();
+            Form1.pathToDB = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + textBoxPath.Text + ";Integrated Security = True";
+            mainForm.ShowDialog();
+        }
+
+        private void ButtonSetPathToDB_Click(object sender, EventArgs e)
+        {
+            new System.Threading.Thread(mainForm).Start();
+
+            
+            
+        }
     }
 }
