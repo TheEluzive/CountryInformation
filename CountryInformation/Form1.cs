@@ -89,11 +89,11 @@ namespace CountryInformation
                 sql.addCommandParameters("Name", textBoxCountryNameResult.Text);
                 sql.addCommandParameters("Alpha3Code", textBoxAlpha3Code.Text);
                 
-                   
-                    sql.getIdByField("Cities", "Name", 1);
-                    MessageBox.Show(sql.returnId.ToString());
-                    sql.addCommandParameters("Area", float.Parse(textBoxArea.Text));
+                MessageBox.Show((await sql.getIdByField("Cities", "Name", "VOLGOGRAD")).ToString());
+                sql.addCommandParameters("Capital", 1);
+                sql.addCommandParameters("Area", float.Parse(textBoxArea.Text));
                 sql.addCommandParameters("Population", Convert.ToInt32(textBoxPopulation.Text));
+                MessageBox.Show((await sql.getIdByField("Regions", "Name", "Europe")).ToString());
                 sql.addCommandParameters("Region", 1);
                 dataGridView1.Rows.Clear();
                 dataGridView1.Refresh();

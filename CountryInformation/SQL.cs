@@ -13,11 +13,14 @@ namespace CountryInformation
         public SqlConnection sqlConnection { get;}
         public SqlDataReader sqlDataReader { get; set; }
 
-        public int returnId;
+        public string connectionToDBinner;
+
+        public string returnId;
         public SQL(string connectionToDB)
         {
             sqlConnection = new SqlConnection(connectionToDB); 
             sqlDataReader = null;
+            connectionToDBinner = connectionToDB;
         }
 
        
@@ -32,20 +35,34 @@ namespace CountryInformation
             sqlCommand.Parameters.AddWithValue(paramName, value);
         }
 
-        public async void getIdByField<T>(string table, string column, T value )
+        public async Task<int> getIdByField<T>(string table, string column, T value )
         {
-            setSqlCommand("SELECT Id from @Table WHERE @column = @value");
+            SqlConnection sqlConnectionLocal = new SqlConnection(connectionToDBinner);
+            SqlDataReader sqlDataReaderLocal = null;
+            await sqlConnectionLocal.OpenAsync();
+            string sqlCommandLocal = "SELECT Id from " + table + " WHERE " + column +"='" + value+"'";
+            SqlCommand sqlCommand2 = new SqlCommand(sqlCommandLocal, sqlConnectionLocal);
             
-            sqlCommand.Parameters.AddWithValue("Table", table);
-            sqlCommand.Parameters.AddWithValue("column", column);
-            sqlCommand.Parameters.AddWithValue("value", value);
-            //addCommandParameters("table", table);
-            //addCommandParameters("column", column);
-            //addCommandParameters("value", value);
-            sqlDataReader = await executeSqlCommand();
-            sqlDataReader.ReadAsync();
-            returnId = Convert.ToInt32(sqlDataReader);
-           
+            try
+            {
+                sqlDataReaderLocal = await sqlCommand2.ExecuteReaderAsync();
+                //int[] result = new int[2];
+                while (await sqlDataReaderLocal.ReadAsync())
+                {
+                    return Convert.ToInt32(sqlDataReaderLocal[0]);
+                }
+            }
+            catch
+            {
+                returnId = "10";
+                return 0;
+            }
+            finally
+            {
+                
+            }
+            return 0;
+
         }
 
 
