@@ -35,18 +35,17 @@ namespace CountryInformation
             sqlCommand.Parameters.AddWithValue(paramName, value);
         }
 
-        public async Task<int> getIdByField<T>(string table, string column, T value )
+        public async Task<int> getEqualsByField<T>(string columnResult, string table, string column, T value )
         {
             SqlConnection sqlConnectionLocal = new SqlConnection(connectionToDBinner);
             SqlDataReader sqlDataReaderLocal = null;
             await sqlConnectionLocal.OpenAsync();
-            string sqlCommandLocal = "SELECT Id from " + table + " WHERE " + column +"='" + value+"'";
+            string sqlCommandLocal = "SELECT " + columnResult + " from " + table + " WHERE " + column +"='" + value+"'";
             SqlCommand sqlCommand2 = new SqlCommand(sqlCommandLocal, sqlConnectionLocal);
             
             try
             {
-                sqlDataReaderLocal = await sqlCommand2.ExecuteReaderAsync();
-                //int[] result = new int[2];
+                sqlDataReaderLocal = await sqlCommand2.ExecuteReaderAsync();                
                 while (await sqlDataReaderLocal.ReadAsync())
                 {
                     return Convert.ToInt32(sqlDataReaderLocal[0]);
@@ -84,6 +83,8 @@ namespace CountryInformation
                 sqlConnectionLocal.Close();
             }
         }
+
+      
 
 
         public Task<SqlDataReader> executeSqlCommand()

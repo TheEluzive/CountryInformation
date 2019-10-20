@@ -73,11 +73,12 @@
             // 
             this.tabControlSearchCountry.Controls.Add(this.tabPageSearch);
             this.tabControlSearchCountry.Controls.Add(this.tabPageDatabase);
+            this.tabControlSearchCountry.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlSearchCountry.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tabControlSearchCountry.Location = new System.Drawing.Point(12, 12);
+            this.tabControlSearchCountry.Location = new System.Drawing.Point(0, 0);
             this.tabControlSearchCountry.Name = "tabControlSearchCountry";
             this.tabControlSearchCountry.SelectedIndex = 0;
-            this.tabControlSearchCountry.Size = new System.Drawing.Size(994, 515);
+            this.tabControlSearchCountry.Size = new System.Drawing.Size(1018, 539);
             this.tabControlSearchCountry.TabIndex = 1;
             // 
             // tabPageSearch
@@ -90,7 +91,7 @@
             this.tabPageSearch.Location = new System.Drawing.Point(4, 29);
             this.tabPageSearch.Name = "tabPageSearch";
             this.tabPageSearch.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSearch.Size = new System.Drawing.Size(986, 482);
+            this.tabPageSearch.Size = new System.Drawing.Size(1010, 506);
             this.tabPageSearch.TabIndex = 0;
             this.tabPageSearch.Text = "Search";
             this.tabPageSearch.UseVisualStyleBackColor = true;
@@ -260,13 +261,16 @@
             this.tabPageDatabase.Location = new System.Drawing.Point(4, 29);
             this.tabPageDatabase.Name = "tabPageDatabase";
             this.tabPageDatabase.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDatabase.Size = new System.Drawing.Size(986, 482);
+            this.tabPageDatabase.Size = new System.Drawing.Size(1010, 506);
             this.tabPageDatabase.TabIndex = 1;
             this.tabPageDatabase.Text = "Database";
             this.tabPageDatabase.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Name1,

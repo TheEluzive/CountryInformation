@@ -21,6 +21,71 @@ namespace CountryInformation
             InitializeComponent();
         }
 
+        public async Task<int> insertOrUpdateDB(string sqlCommand)
+        {
+            sql.setSqlCommand(sqlCommand);
+            string insertResult = "";
+            try
+            {
+                int returnedId = await sql.getEqualsByField("Id", "Cities", "Name", textBoxCapital.Text);
+                if (returnedId == 0)
+                {
+                    insertResult = (await sql.simpleInsert("INSERT INTO Cities values('" + textBoxCapital.Text + "')")).ToString();
+                    if (!insertResult.Equals("Ok")) MessageBox.Show(insertResult, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    sql.addCommandParameters("Capital", await sql.getEqualsByField("Id", "Cities", "Name", textBoxCapital.Text));
+                }
+                else
+                {
+                    sql.addCommandParameters("Capital", returnedId);
+                }
+
+                returnedId = await sql.getEqualsByField("Id", "Regions", "Name", textBoxRegion.Text);
+                if (returnedId == 0)
+                {
+                    insertResult = (await sql.simpleInsert("INSERT INTO Regions values('" + textBoxRegion.Text + "')")).ToString();
+                    if (!insertResult.Equals("Ok")) MessageBox.Show(insertResult, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    sql.addCommandParameters("Region", await sql.getEqualsByField("Id","Regions", "Name", textBoxRegion.Text));
+                }
+                else
+                {
+                    sql.addCommandParameters("Region", returnedId);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            try
+            {
+
+                sql.addCommandParameters("Name", textBoxCountryNameResult.Text);
+                sql.addCommandParameters("Alpha3Code", textBoxAlpha3Code.Text);
+
+
+                sql.addCommandParameters("Area", float.Parse(textBoxArea.Text));
+                sql.addCommandParameters("Population", Convert.ToInt32(textBoxPopulation.Text));
+
+
+
+                dataGridView1.Rows.Clear();
+                dataGridView1.Refresh();
+                await sql.sqlCommand.ExecuteNonQueryAsync();
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return -1;
+            }
+            finally
+            {
+                sql.sqlConnection.Close();
+            }
+        }
+
         public async void fillDataGrid()
         {
            
@@ -56,7 +121,7 @@ namespace CountryInformation
             }
             finally
             {
-                sql.close();
+                sql.sqlConnection.Close();
             }
         }
 
@@ -83,66 +148,13 @@ namespace CountryInformation
                 if (MessageBox.Show("Сохранить в базу данных информацию?", "Страна найдена", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                 
-                //await sql.sqlConnection.OpenAsync();
-                string sqlCommand = "INSERT INTO Countries(Name, Alpha3Code, Capital, Area, Population, Region) Values(@Name, @Alpha3Code, @Capital, @Area, @Population, @Region)";
-                sql.setSqlCommand(sqlCommand);
-                string insertResult = "";
-                try
-                {
-                    int returnedId = await sql.getIdByField("Cities", "Name", textBoxCapital.Text);
-                    if (returnedId == 0)
-                    {
-                        insertResult = (await sql.simpleInsert("INSERT INTO Cities values('" + textBoxCapital.Text + "')")).ToString();
-                        if(!insertResult.Equals("Ok")) MessageBox.Show(insertResult, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                        sql.addCommandParameters("Capital", await sql.getIdByField("Cities", "Name", textBoxCapital.Text));
-                    }
-                    else
-                    {
-                        sql.addCommandParameters("Capital", returnedId);
-                    }
-
-                    returnedId = await sql.getIdByField("Regions", "Name", textBoxRegion.Text);
-                    if (returnedId == 0)
-                    {
-                        insertResult = (await sql.simpleInsert("INSERT INTO Regions values('" + textBoxRegion.Text + "')")).ToString();
-                        if (!insertResult.Equals("Ok")) MessageBox.Show(insertResult, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                        sql.addCommandParameters("Region", await sql.getIdByField("Regions", "Name", textBoxRegion.Text));
-                    }
-                    else
-                    {
-                        sql.addCommandParameters("Region", returnedId);
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                try { 
-                
-                sql.addCommandParameters("Name", textBoxCountryNameResult.Text);
-                sql.addCommandParameters("Alpha3Code", textBoxAlpha3Code.Text);
-                    
-                   
-                sql.addCommandParameters("Area", float.Parse(textBoxArea.Text));
-                sql.addCommandParameters("Population", Convert.ToInt32(textBoxPopulation.Text));
-                
-                   
-                    
-                dataGridView1.Rows.Clear();
-                dataGridView1.Refresh();
-                await sql.sqlCommand.ExecuteNonQueryAsync();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString(), ex.Source.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                { 
-                sql.sqlConnection.Close();
-                }
+                await sql.sqlConnection.OpenAsync();
+                string sqlCommand;
+                int returnedId = await sql.getEqualsByField("Id", "Countries", "Alpha3Code", textBoxAlpha3Code.Text.ToString());
+                if (returnedId == 0)
+                    sqlCommand = "INSERT INTO Countries(Name, Alpha3Code, Capital, Area, Population, Region) Values(@Name, @Alpha3Code, @Capital, @Area, @Population, @Region)";
+                else sqlCommand = "UPDATE Countries SET Name = @Name, Alpha3Code = @Alpha3Code, Capital = @Capital, Area = @Area, Population = @Population, Region = @Region WHERE Alpha3Code = '"+ textBoxAlpha3Code.Text.ToString()+"'";
+                await insertOrUpdateDB(sqlCommand);
 
                 fillDataGrid();
 
