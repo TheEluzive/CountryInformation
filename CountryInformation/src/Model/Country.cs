@@ -8,7 +8,7 @@
         public string Relevance { get; set; }
         public string Region { get; set; }
         public string Subregion { get; set; }
-        public Translations _Translations { get; set; }
+        public Translations Translations_ { get; set; }
         public int Population { get; set; }
         public float?[] Latlng { get; set; }
         public string Demonym { get; set; }

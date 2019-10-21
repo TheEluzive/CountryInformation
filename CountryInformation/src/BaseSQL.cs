@@ -10,9 +10,9 @@ namespace CountryInformation
         public SqlConnection SqlConnection { get; }
         public SqlDataReader SqlDataReader { get; set; }
 
-        public string connectionToDBinner;
+        private string connectionToDBinner;
 
-        
+
         public SQL(string connectionToDB)
         {
             SqlConnection = new SqlConnection(connectionToDB);
@@ -20,19 +20,17 @@ namespace CountryInformation
             connectionToDBinner = connectionToDB;
         }
 
-
-
-        public void SetSqlCommand(string command)
+        public void SetSqlCommand(string command) //установить запрос
         {
             SqlCommand = new SqlCommand(command, SqlConnection);
         }
 
-        public void AddCommandParameters<T>(string paramName, T value)
+        public void AddCommandParameters<T>(string paramName, T value)//добавление параметров в запрос
         {
             SqlCommand.Parameters.AddWithValue(paramName, value);
         }
 
-        public async Task<int> GetEqualsByField<T>(string columnResult, string table, string column, T value)
+        public async Task<int> GetEqualsByField<T>(string columnResult, string table, string column, T value)//поиск значения в одном столбце и возврат значения из другого, если не нашлось то возвращается 0
         {
             SqlConnection sqlConnectionLocal = new SqlConnection(connectionToDBinner);
             SqlDataReader sqlDataReaderLocal = null;
@@ -47,7 +45,7 @@ namespace CountryInformation
                 {
                     return Convert.ToInt32(sqlDataReaderLocal[0]);
                 }
-                
+
             }
             catch//??
             {
@@ -58,8 +56,6 @@ namespace CountryInformation
                 sqlConnectionLocal.Close();
                 sqlCommandLocal.Dispose();
                 sqlDataReaderLocal.Close();
-                
-
 
             }
             return 0;
@@ -85,12 +81,9 @@ namespace CountryInformation
             {
                 sqlConnectionLocal.Close();
                 sqlCommandLocal.Dispose();
-                
+
             }
         }
-
-
-
 
         public Task<SqlDataReader> ExecuteReaderAsync()
         {
@@ -106,6 +99,6 @@ namespace CountryInformation
             return 0;
         }
 
-       
+
     }
 }

@@ -6,7 +6,7 @@ namespace CountryInformation.Model
 {
     class DataGetter
     {
-        public static List<Country> getData()
+        public static List<Country> GetData()
         {
             var client = new RestClient("https://ajayakv-rest-countries-v1.p.rapidapi.com/rest/v1/all");
             var request = new RestRequest(Method.GET);

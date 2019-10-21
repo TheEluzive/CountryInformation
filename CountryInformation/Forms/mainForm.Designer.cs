@@ -78,7 +78,7 @@
             this.tabControlSearchCountry.Location = new System.Drawing.Point(0, 0);
             this.tabControlSearchCountry.Name = "tabControlSearchCountry";
             this.tabControlSearchCountry.SelectedIndex = 0;
-            this.tabControlSearchCountry.Size = new System.Drawing.Size(1018, 539);
+            this.tabControlSearchCountry.Size = new System.Drawing.Size(1082, 453);
             this.tabControlSearchCountry.TabIndex = 1;
             // 
             // tabPageSearch
@@ -91,7 +91,7 @@
             this.tabPageSearch.Location = new System.Drawing.Point(4, 29);
             this.tabPageSearch.Name = "tabPageSearch";
             this.tabPageSearch.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSearch.Size = new System.Drawing.Size(1010, 506);
+            this.tabPageSearch.Size = new System.Drawing.Size(874, 506);
             this.tabPageSearch.TabIndex = 0;
             this.tabPageSearch.Text = "Search";
             this.tabPageSearch.UseVisualStyleBackColor = true;
@@ -261,7 +261,7 @@
             this.tabPageDatabase.Location = new System.Drawing.Point(4, 29);
             this.tabPageDatabase.Name = "tabPageDatabase";
             this.tabPageDatabase.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDatabase.Size = new System.Drawing.Size(1010, 506);
+            this.tabPageDatabase.Size = new System.Drawing.Size(1074, 420);
             this.tabPageDatabase.TabIndex = 1;
             this.tabPageDatabase.Text = "Database";
             this.tabPageDatabase.UseVisualStyleBackColor = true;
@@ -283,7 +283,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(984, 445);
+            this.dataGridView1.Size = new System.Drawing.Size(1048, 359);
             this.dataGridView1.TabIndex = 1;
             // 
             // Name1
@@ -338,8 +338,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1018, 539);
+            this.ClientSize = new System.Drawing.Size(1082, 453);
             this.Controls.Add(this.tabControlSearchCountry);
+            this.MaximumSize = new System.Drawing.Size(1100, 2000);
             this.Name = "Form1";
             this.Text = "CountryInformation";
             this.Load += new System.EventHandler(this.Form1_Load);

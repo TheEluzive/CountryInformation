@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,7 +11,8 @@ namespace CountryInformation
         {
             this.sql = sql;
         }
-        public async Task<int> InsertOrUpdateDB(string sqlCommand, string name, string alpha3Code, string capital, float area, string population, string region)
+        public async Task<int> InsertOrUpdateDB(string sqlCommand, string name, string alpha3Code, string capital,
+            string area, string population, string region)
         {
             await sql.OpenAsync();
             sql.SetSqlCommand(sqlCommand);
@@ -59,12 +57,12 @@ namespace CountryInformation
                 sql.AddCommandParameters("Alpha3Code", alpha3Code);
 
 
-                sql.AddCommandParameters("Area", area);
+                sql.AddCommandParameters("Area", float.Parse(area));
                 sql.AddCommandParameters("Population", Convert.ToInt32(population));
 
 
 
-                await sql.OpenAsync();             
+                await sql.OpenAsync();
                 await sql.SqlCommand.ExecuteNonQueryAsync();
                 return 0;
             }
@@ -79,7 +77,7 @@ namespace CountryInformation
             }
         }
 
-        public async Task<int> SaveDataInDB(string name, string alpha3Code, string capital, float area, string population, string region)
+        public async Task<int> SaveDataInDB(string name, string alpha3Code, string capital, string area, string population, string region)
         {
             await sql.SqlConnection.OpenAsync();
             string sqlCommand;
@@ -87,11 +85,11 @@ namespace CountryInformation
             if (returnedId == 0)
                 sqlCommand = "INSERT INTO Countries(Name, Alpha3Code, Capital, Area, Population, Region) Values(@Name, @Alpha3Code, @Capital, @Area, @Population, @Region)";
             else sqlCommand = "UPDATE Countries SET Name = @Name, Alpha3Code = @Alpha3Code, Capital = @Capital, Area = @Area, Population = @Population, Region = @Region WHERE Alpha3Code = '" + alpha3Code + "'";
-            await InsertOrUpdateDB(sqlCommand, name,  alpha3Code,  capital,  area, population, region);
+            await InsertOrUpdateDB(sqlCommand, name, alpha3Code, capital, area, population, region);
             return 0;
 
         }
 
-       
+
     }
 }

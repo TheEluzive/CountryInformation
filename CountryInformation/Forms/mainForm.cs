@@ -1,7 +1,6 @@
 ﻿using CountryInformation.Model;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CountryInformation
@@ -16,18 +15,18 @@ namespace CountryInformation
             InitializeComponent();
         }
 
-        
 
-        public async void FillDataGrid()
+
+        public async void FillDataGrid() //заполнение таблицы во вкладке DataBase
         {
-            await sql.OpenAsync();             
+            await sql.OpenAsync();
 
 
             string sqlCommand = "SELECT Countries.Name, Countries.Alpha3Code,  Cities.Name as Capital, Countries.Area, Countries.Population, Regions.Name as Region from Countries INNER JOIN Cities ON Countries.Capital = Cities.Id INNER JOIN Regions ON Countries.Region = Regions.Id ";
             sql.SetSqlCommand(sqlCommand);
 
             List<string[]> data = new List<string[]>();
-            try //заполнение таблицы во вкладке DataBase
+            try 
             {
                 sql.SqlDataReader = await sql.ExecuteReaderAsync();
                 while (await sql.SqlDataReader.ReadAsync())
@@ -60,19 +59,19 @@ namespace CountryInformation
         private async void ButtonSearch_Click(object sender, EventArgs e)
         {
             bool found = false;
-            float area=0;
-            foreach (var item in DataGetter.getData())
+
+            foreach (var item in DataGetter.GetData())
             {
                 if (textBoxSearchCountry.Text == item.Name)
                 {
                     textBoxCountryNameResult.Text = item.Name;
                     textBoxCapital.Text = item.Capital;
                     textBoxAlpha3Code.Text = item.Alpha3Code;
-                    textBoxArea.Text = item.Area.ToString(); area = item.Area.Value;
+                    textBoxArea.Text = item.Area.ToString();
                     textBoxPopulation.Text = item.Population.ToString();
                     textBoxRegion.Text = item.Region;
                     found = true;
-                    
+
                     break;
 
                 }
@@ -83,11 +82,11 @@ namespace CountryInformation
             {
 
                 await highLvlSQL.SaveDataInDB(textBoxCountryNameResult.Text, textBoxAlpha3Code.Text, textBoxCapital.Text,
-                    area, textBoxPopulation.Text, textBoxRegion.Text);
+                    textBoxArea.Text, textBoxPopulation.Text, textBoxRegion.Text); //сохранение найденных полей в базу данных
                 dataGridView1.Rows.Clear();
-                dataGridView1.Refresh();                
+                dataGridView1.Refresh();
                 FillDataGrid();
-                
+
 
             }
 
@@ -104,7 +103,7 @@ namespace CountryInformation
             highLvlSQL = new HighLvlSQL(sql);
         }
         private void Form1_FormClosing(Object sender, FormClosingEventArgs e)
-        {            
+        {
             this.Dispose();
         }
 
